@@ -1,0 +1,3227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IDOLVERSE — Girl Group Simulator</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    user-select:none;
+}
+
+:root{
+    --pink:#ff63b7;
+    --purple:#9274ff;
+    --blue:#63dfff;
+    --gold:#ffd86b;
+    --dark:#080b17;
+    --panel:#11162a;
+    --panel2:#171d34;
+    --text:#f8f9ff;
+    --muted:#9299b7;
+}
+
+body{
+    background:#070a14;
+    color:white;
+    font-family:Arial,sans-serif;
+    overflow-x:hidden;
+}
+
+button{
+    font-family:inherit;
+}
+
+.hidden{
+    display:none!important;
+}
+
+/* =========================
+   GAME TOP BAR
+========================= */
+
+.topbar{
+    height:64px;
+    background:rgba(8,11,23,.96);
+    border-bottom:1px solid #242941;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:20px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+.logo span{
+    color:var(--pink);
+}
+
+.resources{
+    display:flex;
+    gap:8px;
+}
+
+.resource{
+    background:#171c31;
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:12px;
+}
+
+.back{
+    background:#171c31;
+    border:1px solid #2b3049;
+    color:white;
+    padding:9px 13px;
+    border-radius:9px;
+    cursor:pointer;
+}
+
+.back:hover{
+    background:#242b48;
+}
+
+/* =========================
+   GAME AREA
+========================= */
+
+.game{
+    padding-top:64px;
+    min-height:100vh;
+}
+
+.screen{
+    display:none;
+    min-height:calc(100vh - 64px);
+    padding:24px;
+}
+
+.screen.active{
+    display:block;
+}
+
+/* =========================
+   HOME
+========================= */
+
+.home{
+    max-width:1100px;
+    margin:auto;
+}
+
+.hero{
+    min-height:340px;
+    border-radius:25px;
+    padding:45px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    background:
+        radial-gradient(circle at 70% 20%,#3e266e,transparent 35%),
+        radial-gradient(circle at 20% 70%,#123f56,transparent 35%),
+        linear-gradient(135deg,#151a38,#0b0e1d);
+    border:1px solid #292e49;
+    overflow:hidden;
+    position:relative;
+}
+
+.hero:after{
+    content:"✦";
+    position:absolute;
+    right:10%;
+    top:15%;
+    font-size:150px;
+    color:rgba(255,255,255,.04);
+}
+
+.hero h1{
+    font-size:50px;
+    max-width:650px;
+}
+
+.hero h1 span{
+    color:var(--pink);
+}
+
+.hero p{
+    color:#aeb4cf;
+    margin:12px 0 25px;
+    max-width:580px;
+    line-height:1.6;
+}
+
+.bigbutton{
+    width:max-content;
+    padding:14px 24px;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    color:white;
+    border:0;
+    border-radius:12px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.bigbutton:hover{
+    transform:translateY(-2px);
+}
+
+/* =========================
+   GROUP SELECT
+========================= */
+
+.title{
+    max-width:1100px;
+    margin:0 auto 20px;
+}
+
+.title h2{
+    font-size:28px;
+}
+
+.title p{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:5px;
+}
+
+.group-grid{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:15px;
+}
+
+.group-card{
+    background:linear-gradient(145deg,#151a31,#0e1223);
+    border:1px solid #292e49;
+    border-radius:18px;
+    padding:18px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.group-card:hover{
+    transform:translateY(-4px);
+    border-color:var(--pink);
+}
+
+.group-icon{
+    height:130px;
+    border-radius:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:55px;
+    background:
+        radial-gradient(circle,#4c2d72,#15172e);
+    margin-bottom:14px;
+}
+
+.group-card h3{
+    font-size:19px;
+}
+
+.group-card p{
+    color:var(--muted);
+    font-size:11px;
+    margin-top:5px;
+}
+
+/* =========================
+   CREATE GROUP
+========================= */
+
+.create-box{
+    max-width:650px;
+    margin:auto;
+    background:#11162a;
+    border:1px solid #292e49;
+    border-radius:20px;
+    padding:25px;
+}
+
+input,select{
+    width:100%;
+    background:#090d1b;
+    border:1px solid #2a3049;
+    color:white;
+    padding:12px;
+    border-radius:9px;
+    margin:7px 0 15px;
+    outline:none;
+}
+
+label{
+    color:#aeb4cd;
+    font-size:12px;
+}
+
+/* =========================
+   GAME MENU
+========================= */
+
+.menu-grid{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.menu-card{
+    min-height:170px;
+    border:1px solid #292e49;
+    border-radius:20px;
+    padding:22px;
+    background:linear-gradient(145deg,#151a31,#0d1120);
+    cursor:pointer;
+    transition:.2s;
+}
+
+.menu-card:hover{
+    transform:scale(1.02);
+    border-color:var(--pink);
+}
+
+.menu-card .emoji{
+    font-size:40px;
+}
+
+.menu-card h3{
+    margin-top:15px;
+}
+
+.menu-card p{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:6px;
+}
+
+/* =========================
+   MEMBER SELECT
+========================= */
+
+.member-select{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+}
+
+.member-card{
+    background:#11162a;
+    border:1px solid #292e49;
+    border-radius:18px;
+    padding:15px;
+    cursor:pointer;
+}
+
+.member-card:hover{
+    border-color:var(--pink);
+}
+
+.mini-avatar{
+    height:190px;
+    position:relative;
+    border-radius:13px;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 50% 25%,#ffd8c2,#a95382 35%,#1b1c38);
+}
+
+.mini-body{
+    position:absolute;
+    width:75px;
+    height:125px;
+    left:50%;
+    bottom:-20px;
+    transform:translateX(-50%);
+    border-radius:35px 35px 5px 5px;
+    background:var(--pink);
+}
+
+.mini-head{
+    position:absolute;
+    width:62px;
+    height:70px;
+    left:50%;
+    transform:translateX(-50%);
+    top:40px;
+    background:#f3c5ad;
+    border-radius:45%;
+    z-index:3;
+}
+
+.mini-hair{
+    position:absolute;
+    width:76px;
+    height:86px;
+    left:50%;
+    transform:translateX(-50%);
+    top:30px;
+    background:#191520;
+    border-radius:50% 50% 35% 35%;
+    z-index:4;
+}
+
+.member-card h3{
+    margin-top:12px;
+}
+
+.member-card p{
+    color:var(--muted);
+    font-size:11px;
+    margin-top:4px;
+}
+
+/* =========================
+   STYLING
+========================= */
+
+.styling-layout{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:380px 1fr;
+    gap:18px;
+}
+
+.avatar-preview{
+    height:600px;
+    border-radius:22px;
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 50% 25%,#ffd9c5,#814b78 35%,#10142a 75%);
+    border:1px solid #303650;
+}
+
+.avatar-body{
+    position:absolute;
+    width:130px;
+    height:250px;
+    left:50%;
+    bottom:-50px;
+    transform:translateX(-50%);
+    border-radius:65px 65px 15px 15px;
+    background:var(--pink);
+}
+
+.avatar-head{
+    position:absolute;
+    width:115px;
+    height:130px;
+    left:50%;
+    transform:translateX(-50%);
+    top:100px;
+    background:#f2c4ad;
+    border-radius:48%;
+    z-index:3;
+}
+
+.avatar-hair{
+    position:absolute;
+    width:140px;
+    height:155px;
+    left:50%;
+    transform:translateX(-50%);
+    top:80px;
+    background:#19151e;
+    border-radius:50% 50% 40% 40%;
+    z-index:4;
+    transition:.3s;
+}
+
+/* Hair styles */
+
+.hair-straight{
+    border-radius:45% 45% 15px 15px;
+    height:190px;
+}
+
+.hair-wave{
+    border-radius:50%;
+    height:170px;
+    transform:translateX(-50%) rotate(2deg);
+}
+
+.hair-ponytail{
+    border-radius:50%;
+}
+
+.hair-long{
+    height:230px;
+    border-radius:48% 48% 25px 25px;
+}
+
+.face{
+    position:absolute;
+    top:150px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:5;
+    font-size:17px;
+}
+
+.style-panel{
+    background:#11162a;
+    border:1px solid #292e49;
+    border-radius:22px;
+    padding:20px;
+}
+
+.style-section{
+    margin-bottom:22px;
+}
+
+.style-section h3{
+    margin-bottom:10px;
+    font-size:14px;
+}
+
+.option-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+}
+
+.option{
+    background:#1a2037;
+    border:1px solid #2a3049;
+    color:#c6cbdf;
+    padding:11px 5px;
+    border-radius:9px;
+    text-align:center;
+    font-size:11px;
+    cursor:pointer;
+}
+
+.option:hover{
+    border-color:var(--pink);
+    color:white;
+}
+
+.color-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.color{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    border:2px solid #343a53;
+    cursor:pointer;
+}
+
+.color:hover{
+    transform:scale(1.1);
+}
+
+.straightener{
+    background:linear-gradient(135deg,#272d4b,#171b30);
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #303650;
+}
+
+.straightener button{
+    margin-top:9px;
+    padding:9px 13px;
+    background:var(--purple);
+    color:white;
+    border:0;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* =========================
+   FORMATION EDITOR
+========================= */
+
+.formation-layout{
+    max-width:1200px;
+    margin:auto;
+}
+
+.formation-toolbar{
+    background:#11162a;
+    border:1px solid #292e49;
+    border-radius:14px;
+    padding:13px;
+    margin-bottom:13px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.tool{
+    background:#1b2037;
+    color:white;
+    border:1px solid #303650;
+    padding:9px 13px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.tool.active,
+.tool:hover{
+    background:var(--pink);
+}
+
+.stage-editor{
+    height:560px;
+    position:relative;
+    overflow:hidden;
+    border-radius:24px;
+    border:2px solid #303650;
+    background:
+        radial-gradient(circle at 50% 10%,#564075,transparent 25%),
+        linear-gradient(#15152e,#080a17);
+}
+
+/* stage floor */
+
+.stage-editor:after{
+    content:"";
+    position:absolute;
+    left:8%;
+    right:8%;
+    bottom:7%;
+    height:55%;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.07) 0 1px,
+            transparent 1px 70px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.07) 0 1px,
+            transparent 1px 70px
+        );
+    transform:perspective(500px) rotateX(55deg);
+    transform-origin:bottom;
+    pointer-events:none;
+}
+
+.stage-title{
+    position:absolute;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#747b9b;
+    font-size:11px;
+    letter-spacing:3px;
+}
+
+.idol{
+    width:62px;
+    height:82px;
+    position:absolute;
+    cursor:grab;
+    z-index:20;
+    transform:translate(-50%,-50%);
+}
+
+.idol:active{
+    cursor:grabbing;
+}
+
+.idol-head{
+    width:30px;
+    height:30px;
+    background:#f4c7ae;
+    border-radius:50%;
+    margin:auto;
+    position:relative;
+    z-index:3;
+}
+
+.idol-hair{
+    width:36px;
+    height:36px;
+    background:#19151e;
+    border-radius:50%;
+    position:absolute;
+    top:-3px;
+    left:13px;
+    z-index:4;
+}
+
+.idol-body{
+    width:30px;
+    height:42px;
+    background:var(--pink);
+    margin:auto;
+    border-radius:10px 10px 4px 4px;
+}
+
+.idol-name{
+    position:absolute;
+    top:77px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:9px;
+    white-space:nowrap;
+    background:rgba(0,0,0,.55);
+    padding:3px 5px;
+    border-radius:4px;
+}
+
+.formation-info{
+    margin-top:12px;
+    color:#9299b7;
+    font-size:12px;
+}
+
+/* =========================
+   PERFORMANCE
+========================= */
+
+.performance-stage{
+    max-width:1100px;
+    margin:auto;
+}
+
+.live-stage{
+    height:600px;
+    position:relative;
+    border-radius:25px;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            ellipse at 50% 5%,
+            #f8b4ee,
+            #55276d 22%,
+            #11152c 55%,
+            #050711
+        );
+    border:1px solid #3a3157;
+}
+
+.spotlight{
+    position:absolute;
+    width:160px;
+    height:500px;
+    top:-100px;
+    background:linear-gradient(
+        rgba(255,255,255,.16),
+        transparent
+    );
+    transform:rotate(20deg);
+    filter:blur(5px);
+    animation:lightMove 3s infinite alternate;
+}
+
+.s1{
+    left:10%;
+}
+
+.s2{
+    right:10%;
+    transform:rotate(-20deg);
+    animation-delay:1s;
+}
+
+@keyframes lightMove{
+    from{
+        opacity:.2;
+    }
+    to{
+        opacity:.7;
+    }
+}
+
+.live-floor{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:170px;
+    background:
+        linear-gradient(
+            transparent,
+            rgba(5,7,17,.95)
+        );
+}
+
+.performer{
+    position:absolute;
+    width:70px;
+    height:150px;
+    transform:translate(-50%,0);
+    transition:left .4s,top .4s;
+    z-index:10;
+}
+
+.performer-head{
+    width:43px;
+    height:48px;
+    margin:auto;
+    background:#f3c4ab;
+    border-radius:50%;
+    position:relative;
+    z-index:2;
+}
+
+.performer-hair{
+    width:50px;
+    height:55px;
+    position:absolute;
+    top:-6px;
+    left:10px;
+    background:#17131d;
+    border-radius:50%;
+    z-index:3;
+}
+
+.performer-body{
+    width:38px;
+    height:70px;
+    margin:auto;
+    border-radius:12px;
+    background:var(--pink);
+}
+
+.arm{
+    position:absolute;
+    top:58px;
+    width:11px;
+    height:70px;
+    background:#f3c4ab;
+    border-radius:10px;
+    transform-origin:top;
+}
+
+.arm.left{
+    left:6px;
+}
+
+.arm.right{
+    right:6px;
+}
+
+.leg{
+    position:absolute;
+    top:118px;
+    width:12px;
+    height:55px;
+    background:#171a2c;
+    border-radius:10px;
+}
+
+.leg.left{
+    left:21px;
+}
+
+.leg.right{
+    right:21px;
+}
+
+/* synced dance */
+
+.dancing .performer{
+    animation:danceMain .8s infinite alternate ease-in-out;
+}
+
+.dancing .performer:nth-child(2){
+    animation-delay:.08s;
+}
+
+.dancing .performer:nth-child(3){
+    animation-delay:.16s;
+}
+
+.dancing .performer:nth-child(4){
+    animation-delay:.24s;
+}
+
+.dancing .performer:nth-child(5){
+    animation-delay:.32s;
+}
+
+.dancing .performer:nth-child(6){
+    animation-delay:.40s;
+}
+
+.dancing .performer:nth-child(7){
+    animation-delay:.48s;
+}
+
+.dancing .performer:nth-child(8){
+    animation-delay:.56s;
+}
+
+@keyframes danceMain{
+    0%{
+        transform:translate(-50%,0) rotate(-5deg);
+    }
+    50%{
+        transform:translate(-50%,-24px) rotate(0deg);
+    }
+    100%{
+        transform:translate(-50%,0) rotate(5deg);
+    }
+}
+
+.dance-ui{
+    max-width:1100px;
+    margin:13px auto;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.dance-ui button{
+    padding:11px 17px;
+    border:0;
+    border-radius:9px;
+    background:#1a2037;
+    color:white;
+    cursor:pointer;
+}
+
+.dance-ui button.primary{
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+}
+
+.sync-meter{
+    margin-left:auto;
+    color:#8fefff;
+    font-size:12px;
+    padding:11px;
+}
+
+/* =========================
+   ENDING FAIRY
+========================= */
+
+.ending{
+    position:absolute;
+    inset:0;
+    background:rgba(5,7,17,.91);
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.ending.show{
+    display:flex;
+}
+
+.ending h2{
+    color:var(--gold);
+    font-size:45px;
+    text-shadow:0 0 25px #ff6fc3;
+}
+
+.fairy-idol{
+    width:150px;
+    height:190px;
+    border-radius:50%;
+    background:
+        radial-gradient(circle at 50% 35%,#ffd9c5,#bd668e 45%,#352044);
+    margin:20px;
+    box-shadow:0 0 80px rgba(255,99,183,.55);
+}
+
+.ending p{
+    color:#c6cadb;
+}
+
+/* =========================
+   COMPETITION
+========================= */
+
+.competition{
+    max-width:1100px;
+    margin:auto;
+}
+
+.race{
+    background:#11162a;
+    border:1px solid #292e49;
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.position{
+    font-size:25px;
+    font-weight:900;
+    width:40px;
+    color:var(--gold);
+}
+
+.race-info{
+    flex:1;
+}
+
+.race-info h3{
+    font-size:15px;
+}
+
+.race-info p{
+    color:var(--muted);
+    font-size:11px;
+    margin-top:3px;
+}
+
+.score{
+    font-size:22px;
+    font-weight:900;
+    color:var(--pink);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:850px){
+
+    .menu-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .styling-layout{
+        grid-template-columns:1fr;
+    }
+
+    .avatar-preview{
+        height:450px;
+    }
+
+    .stage-editor,
+    .live-stage{
+        height:470px;
+    }
+}
+
+@media(max-width:600px){
+
+    .hero{
+        padding:28px;
+    }
+
+    .hero h1{
+        font-size:34px;
+    }
+
+    .menu-grid{
+        grid-template-columns:1fr;
+    }
+
+    .screen{
+        padding:15px;
+    }
+
+    .option-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .resources{
+        display:none;
+    }
+
+    .formation-toolbar{
+        overflow-x:auto;
+        flex-wrap:nowrap;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+<button
+class="back"
+id="backButton"
+onclick="goBack()">
+← Back
+</button>
+
+<div class="logo">
+IDOL<span>VERSE</span>
+</div>
+
+<div class="resources">
+<div class="resource">💎 <span id="gems">2,500</span></div>
+<div class="resource">💰 <span id="coins">50,000</span></div>
+</div>
+
+</header>
+
+
+<div class="game">
+
+<!-- ================= HOME ================= -->
+
+<section
+id="home"
+class="screen active">
+
+<div class="home">
+
+<div class="hero">
+
+<h1>
+Create Your
+<span>Dream Girl Group.</span>
+</h1>
+
+<p>
+Buat grup idolmu sendiri, styling setiap member,
+atur pola lantai, latihan dance, tampil di berbagai
+panggung, dan bawa grupmu menjadi juara.
+</p>
+
+<button
+class="bigbutton"
+onclick="showScreen('groups')">
+START GAME ✦
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= GROUPS ================= -->
+
+<section
+id="groups"
+class="screen">
+
+<div class="title">
+
+<h2>
+My Girl Groups
+</h2>
+
+<p>
+Pilih grup atau buat grup baru.
+</p>
+
+</div>
+
+<div
+id="groupGrid"
+class="group-grid">
+</div>
+
+</section>
+
+
+<!-- ================= CREATE ================= -->
+
+<section
+id="create"
+class="screen">
+
+<div class="title">
+
+<h2>
+Create Girl Group
+</h2>
+
+<p>
+Bangun grup idol impianmu.
+</p>
+
+</div>
+
+<div class="create-box">
+
+<label>
+Group Name
+</label>
+
+<input
+id="newGroupName"
+placeholder="Contoh: LUMINA">
+
+<label>
+Number of Members
+</label>
+
+<select id="newMemberCount">
+
+<option value="3">3 Members</option>
+<option value="4">4 Members</option>
+<option value="5">5 Members</option>
+<option value="6">6 Members</option>
+<option value="7">7 Members</option>
+<option value="8">8 Members</option>
+
+</select>
+
+<label>
+Concept
+</label>
+
+<select id="newConcept">
+
+<option>Fresh</option>
+<option>Elegant</option>
+<option>Girl Crush</option>
+<option>Dreamy</option>
+<option>Dark</option>
+<option>Cyber</option>
+
+</select>
+
+<button
+class="bigbutton"
+onclick="createGroup()">
+CREATE GROUP
+</button>
+
+</div>
+
+</section>
+
+
+<!-- ================= GROUP MENU ================= -->
+
+<section
+id="groupMenu"
+class="screen">
+
+<div class="title">
+
+<h2 id="currentGroupTitle">
+Group
+</h2>
+
+<p id="currentGroupSubtitle">
+Manage your idols.
+</p>
+
+</div>
+
+<div class="menu-grid">
+
+<div
+class="menu-card"
+onclick="openMembers()">
+
+<div class="emoji">👩‍🎤</div>
+
+<h3>Members</h3>
+
+<p>
+Lihat dan pilih member.
+</p>
+
+</div>
+
+
+<div
+class="menu-card"
+onclick="openStyling()">
+
+<div class="emoji">👗</div>
+
+<h3>Styling</h3>
+
+<p>
+Fashion, rambut dan makeover.
+</p>
+
+</div>
+
+
+<div
+class="menu-card"
+onclick="openFormation()">
+
+<div class="emoji">💃</div>
+
+<h3>Formation</h3>
+
+<p>
+Atur posisi setiap member.
+</p>
+
+</div>
+
+
+<div
+class="menu-card"
+onclick="openPerformance()">
+
+<div class="emoji">🎤</div>
+
+<h3>Performance</h3>
+
+<p>
+Tampilkan choreography.
+</p>
+
+</div>
+
+
+<div
+class="menu-card"
+onclick="openCompetition()">
+
+<div class="emoji">🏆</div>
+
+<h3>Competition</h3>
+
+<p>
+Bersaing dengan grup lain.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= MEMBERS ================= -->
+
+<section
+id="members"
+class="screen">
+
+<div class="title">
+
+<h2>
+Select Member
+</h2>
+
+<p>
+Pilih member yang ingin kamu kelola.
+</p>
+
+</div>
+
+<div
+id="memberSelect"
+class="member-select">
+</div>
+
+</section>
+
+
+<!-- ================= STYLING ================= -->
+
+<section
+id="styling"
+class="screen">
+
+<div class="title">
+
+<h2>
+Styling Studio ✦
+</h2>
+
+<p>
+Ubah penampilan setiap member secara individual.
+</p>
+
+</div>
+
+<div class="styling-layout">
+
+<div
+class="avatar-preview">
+
+<div
+id="previewBody"
+class="avatar-body">
+</div>
+
+<div
+class="avatar-head">
+</div>
+
+<div
+id="previewHair"
+class="avatar-hair">
+</div>
+
+<div class="face">
+◕ᴗ◕
+</div>
+
+</div>
+
+
+<div class="style-panel">
+
+<h2 id="styleMemberName">
+Member
+</h2>
+
+<br>
+
+
+<div class="style-section">
+
+<h3>
+💇 Hairstyle
+</h3>
+
+<div class="option-grid">
+
+<div
+class="option"
+onclick="setHair('normal')">
+Long
+</div>
+
+<div
+class="option"
+onclick="setHair('straight')">
+Straight
+</div>
+
+<div
+class="option"
+onclick="setHair('wave')">
+Wave
+</div>
+
+<div
+class="option"
+onclick="setHair('ponytail')">
+Ponytail
+</div>
+
+<div
+class="option"
+onclick="setHair('long')">
+Extra Long
+</div>
+
+</div>
+
+</div>
+
+
+<div class="style-section">
+
+<h3>
+🎨 Hair Color
+</h3>
+
+<div class="color-row">
+
+<div
+class="color"
+style="background:#17131d"
+onclick="setHairColor('#17131d')">
+</div>
+
+<div
+class="color"
+style="background:#6b3828"
+onclick="setHairColor('#6b3828')">
+</div>
+
+<div
+class="color"
+style="background:#e3bd66"
+onclick="setHairColor('#e3bd66')">
+</div>
+
+<div
+class="color"
+style="background:#dc6b9e"
+onclick="setHairColor('#dc6b9e')">
+</div>
+
+<div
+class="color"
+style="background:#5075cf"
+onclick="setHairColor('#5075cf')">
+</div>
+
+<div
+class="color"
+style="background:#f3f3f3"
+onclick="setHairColor('#f3f3f3')">
+</div>
+
+</div>
+
+</div>
+
+
+<div class="style-section">
+
+<h3>
+🔥 Hair Tools
+</h3>
+
+<div class="straightener">
+
+<p style="font-size:12px;color:#aeb4cd">
+Gunakan catokan untuk membuat rambut
+member menjadi lurus.
+</p>
+
+<button
+onclick="straightenHair()">
+🔥 CATOK RAMBUT
+</button>
+
+</div>
+
+</div>
+
+
+<div class="style-section">
+
+<h3>
+👚 Top / Baju
+</h3>
+
+<div class="option-grid">
+
+<div
+class="option"
+onclick="setTop('crop')">
+Crop Top
+</div>
+
+<div
+class="option"
+onclick="setTop('jacket')">
+Jacket
+</div>
+
+<div
+class="option"
+onclick="setTop('tee')">
+T-Shirt
+</div>
+
+<div
+class="option"
+onclick="setTop('blouse')">
+Blouse
+</div>
+
+</div>
+
+</div>
+
+
+<div class="style-section">
+
+<h3>
+👖 Bottom
+</h3>
+
+<div class="option-grid">
+
+<div
+class="option"
+onclick="setBottom('pants')">
+Pants
+</div>
+
+<div
+class="option"
+onclick="setBottom('skirt')">
+Skirt
+</div>
+
+<div
+class="option"
+onclick="setBottom('shorts')">
+Shorts
+</div>
+
+<div
+class="option"
+onclick="setBottom('none')">
+Dress
+</div>
+
+</div>
+
+</div>
+
+
+<div class="style-section">
+
+<h3>
+👗 Dress
+</h3>
+
+<div class="option-grid">
+
+<div
+class="option"
+onclick="setDress(false)">
+No Dress
+</div>
+
+<div
+class="option"
+onclick="setDress(true)">
+Princess
+</div>
+
+</div>
+
+</div>
+
+
+<div class="style-section">
+
+<h3>
+🎨 Outfit Color
+</h3>
+
+<div class="color-row">
+
+<div
+class="color"
+style="background:#ff63b7"
+onclick="setOutfitColor('#ff63b7')">
+</div>
+
+<div
+class="color"
+style="background:#9274ff"
+onclick="setOutfitColor('#9274ff')">
+</div>
+
+<div
+class="color"
+style="background:#63dfff"
+onclick="setOutfitColor('#63dfff')">
+</div>
+
+<div
+class="color"
+style="background:#ffd86b"
+onclick="setOutfitColor('#ffd86b')">
+</div>
+
+<div
+class="color"
+style="background:white"
+onclick="setOutfitColor('#ffffff')">
+</div>
+
+<div
+class="color"
+style="background:#171a2c"
+onclick="setOutfitColor('#171a2c')">
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= FORMATION ================= -->
+
+<section
+id="formation"
+class="screen">
+
+<div class="title">
+
+<h2>
+Formation Editor 💃
+</h2>
+
+<p>
+<strong>Drag member</strong> ke posisi yang kamu inginkan.
+Pola lantai ini akan digunakan saat performance.
+</p>
+
+</div>
+
+<div class="formation-layout">
+
+<div class="formation-toolbar">
+
+<button
+class="tool"
+onclick="formationPreset('line')">
+LINE
+</button>
+
+<button
+class="tool"
+onclick="formationPreset('v')">
+V
+</button>
+
+<button
+class="tool"
+onclick="formationPreset('triangle')">
+TRIANGLE
+</button>
+
+<button
+class="tool"
+onclick="formationPreset('diamond')">
+DIAMOND
+</button>
+
+<button
+class="tool"
+onclick="formationPreset('circle')">
+CIRCLE
+</button>
+
+<button
+class="tool"
+onclick="formationPreset('random')">
+RANDOM
+</button>
+
+</div>
+
+
+<div
+id="formationStage"
+class="stage-editor">
+
+<div class="stage-title">
+MAIN STAGE
+</div>
+
+</div>
+
+
+<div class="formation-info">
+
+💡 Tip:
+Drag lingkaran member ke mana saja di stage.
+Posisi yang kamu buat akan dipakai ketika dance.
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= PERFORMANCE ================= -->
+
+<section
+id="performance"
+class="screen">
+
+<div class="title">
+
+<h2>
+LIVE PERFORMANCE 🎤
+</h2>
+
+<p>
+Lihat seluruh member menjalankan choreography secara sinkron.
+</p>
+
+</div>
+
+<div class="performance-stage">
+
+<div
+id="liveStage"
+class="live-stage">
+
+<div class="spotlight s1"></div>
+<div class="spotlight s2"></div>
+
+<div class="live-floor"></div>
+
+<div
+id="performers">
+</div>
+
+
+<div
+id="ending"
+class="ending">
+
+<div class="fairy-idol">
+</div>
+
+<h2>
+ENDING FAIRY ✨
+</h2>
+
+<p id="endingName">
+Member
+</p>
+
+</div>
+
+</div>
+
+
+<div class="dance-ui">
+
+<button
+class="primary"
+onclick="startDance()">
+▶ START DANCE
+</button>
+
+<button
+onclick="stopDance()">
+■ STOP
+</button>
+
+<button
+onclick="showEnding()">
+✨ ENDING FAIRY
+</button>
+
+<div class="sync-meter">
+SYNC: <b id="syncValue">100%</b>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= COMPETITION ================= -->
+
+<section
+id="competition"
+class="screen">
+
+<div class="title">
+
+<h2>
+Competition 🏆
+</h2>
+
+<p>
+Bandingkan performance grupmu dengan rival.
+</p>
+
+</div>
+
+<div
+id="competitionList"
+class="competition">
+</div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   GAME DATA
+========================================= */
+
+let game={
+    coins:50000,
+    gems:2500,
+    groups:[],
+    currentGroup:null,
+    currentMember:0,
+    previousScreen:"home"
+};
+
+
+/* =========================================
+   SAVE
+========================================= */
+
+function saveGame(){
+
+    localStorage.setItem(
+        "idolverse_save",
+        JSON.stringify(game)
+    );
+
+}
+
+
+/* =========================================
+   LOAD
+========================================= */
+
+function loadGame(){
+
+    let saved=
+        localStorage.getItem(
+            "idolverse_save"
+        );
+
+    if(saved){
+        game=JSON.parse(saved);
+    }
+
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+let historyStack=[];
+
+function showScreen(id){
+
+    let current=
+        document.querySelector(
+            ".screen.active"
+        );
+
+    if(current &&
+       current.id!==id){
+
+        historyStack.push(
+            current.id
+        );
+
+    }
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(
+            s=>s.classList.remove("active")
+        );
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+    if(id==="groups")
+        renderGroups();
+
+    if(id==="members")
+        renderMembers();
+
+    if(id==="styling")
+        renderStyling();
+
+    if(id==="formation")
+        renderFormation();
+
+    if(id==="performance")
+        renderPerformance();
+
+    if(id==="competition")
+        renderCompetition();
+
+}
+
+
+function goBack(){
+
+    if(historyStack.length){
+
+        let previous=
+            historyStack.pop();
+
+        document
+            .querySelectorAll(".screen")
+            .forEach(
+                s=>s.classList.remove("active")
+            );
+
+        document
+            .getElementById(previous)
+            .classList.add("active");
+
+        return;
+
+    }
+
+    showScreen("home");
+
+}
+
+
+/* =========================================
+   GROUP CREATION
+========================================= */
+
+const defaultNames=[
+    "Mina",
+    "Yuna",
+    "Sora",
+    "Hana",
+    "Rina",
+    "Nari",
+    "Lia",
+    "Mira"
+];
+
+
+function createGroup(){
+
+    let name=
+        document
+        .getElementById("newGroupName")
+        .value.trim();
+
+    if(!name){
+
+        alert("Masukkan nama grup.");
+
+        return;
+
+    }
+
+
+    let count=
+        Number(
+            document
+            .getElementById("newMemberCount")
+            .value
+        );
+
+
+    let concept=
+        document
+        .getElementById("newConcept")
+        .value;
+
+
+    let members=[];
+
+
+    for(let i=0;i<count;i++){
+
+        members.push({
+
+            name:
+                defaultNames[i],
+
+            hair:
+                "normal",
+
+            hairColor:
+                "#17131d",
+
+            outfit:
+                "#ff63b7",
+
+            top:
+                "crop",
+
+            bottom:
+                "skirt",
+
+            dress:
+                false,
+
+            x:
+                20 +
+                (i/(count-1||1))*60,
+
+            y:
+                60,
+
+            dance:
+                Math.floor(
+                    75+
+                    Math.random()*25
+                ),
+
+            vocal:
+                Math.floor(
+                    70+
+                    Math.random()*30
+                )
+
+        });
+
+    }
+
+
+    let group={
+
+        id:Date.now(),
+
+        name:name,
+
+        concept:concept,
+
+        members:members,
+
+        score:0,
+
+        popularity:50
+
+    };
+
+
+    game.groups.push(group);
+
+    game.currentGroup=
+        group.id;
+
+    game.coins-=5000;
+
+    saveGame();
+
+    showScreen("groupMenu");
+
+    updateGroupMenu();
+
+}
+
+
+/* =========================================
+   GROUP LIST
+========================================= */
+
+function renderGroups(){
+
+    let box=
+        document
+        .getElementById("groupGrid");
+
+    box.innerHTML="";
+
+
+    game.groups.forEach(
+        group=>{
+
+            let card=
+                document.createElement("div");
+
+            card.className=
+                "group-card";
+
+            card.innerHTML=`
+
+                <div class="group-icon">
+                    ${conceptEmoji(group.concept)}
+                </div>
+
+                <h3>
+                    ${group.name}
+                </h3>
+
+                <p>
+                    ${group.concept}
+                    • ${group.members.length}
+                    members
+                </p>
+
+            `;
+
+            card.onclick=()=>{
+
+                game.currentGroup=
+                    group.id;
+
+                historyStack=[];
+
+                showScreen(
+                    "groupMenu"
+                );
+
+                updateGroupMenu();
+
+            };
+
+            box.appendChild(card);
+
+        }
+    );
+
+
+    let create=
+        document.createElement("div");
+
+    create.className=
+        "group-card";
+
+    create.innerHTML=`
+
+        <div class="group-icon">
+            ＋
+        </div>
+
+        <h3>
+            Create New Group
+        </h3>
+
+        <p>
+            Buat girl group baru.
+        </p>
+
+    `;
+
+    create.onclick=()=>{
+        showScreen("create");
+    };
+
+    box.appendChild(create);
+
+}
+
+
+function conceptEmoji(c){
+
+    return {
+
+        Fresh:"🍋",
+
+        Elegant:"👑",
+
+        "Girl Crush":"🔥",
+
+        Dreamy:"✨",
+
+        Dark:"🌙",
+
+        Cyber:"💿"
+
+    }[c] || "🎤";
+
+}
+
+
+/* =========================================
+   CURRENT GROUP
+========================================= */
+
+function getGroup(){
+
+    return game.groups.find(
+        g=>g.id===game.currentGroup
+    );
+
+}
+
+
+function updateGroupMenu(){
+
+    let group=getGroup();
+
+    if(!group)
+        return;
+
+    document
+        .getElementById(
+            "currentGroupTitle"
+        )
+        .textContent=
+        group.name;
+
+    document
+        .getElementById(
+            "currentGroupSubtitle"
+        )
+        .textContent=
+        group.concept+
+        " • "+
+        group.members.length+
+        " members";
+
+}
+
+
+/* =========================================
+   MEMBERS
+========================================= */
+
+function openMembers(){
+
+    historyStack=[];
+
+    showScreen("members");
+
+}
+
+
+function renderMembers(){
+
+    let group=getGroup();
+
+    let box=
+        document
+        .getElementById(
+            "memberSelect"
+        );
+
+    box.innerHTML="";
+
+
+    group.members.forEach(
+        (member,index)=>{
+
+            let card=
+                document.createElement("div");
+
+            card.className=
+                "member-card";
+
+            card.innerHTML=`
+
+                <div class="mini-avatar">
+
+                    <div
+                        class="mini-body"
+                        style="
+                        background:${member.outfit}">
+                    </div>
+
+                    <div class="mini-head">
+                    </div>
+
+                    <div
+                        class="mini-hair"
+                        style="
+                        background:${member.hairColor}">
+                    </div>
+
+                </div>
+
+                <h3>
+                    ${member.name}
+                </h3>
+
+                <p>
+                    Dance ${member.dance}
+                    • Vocal ${member.vocal}
+                </p>
+
+            `;
+
+            card.onclick=()=>{
+
+                game.currentMember=
+                    index;
+
+                showScreen("styling");
+
+            };
+
+            box.appendChild(card);
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   STYLING
+========================================= */
+
+function openStyling(){
+
+    showScreen("members");
+
+}
+
+
+function renderStyling(){
+
+    let group=getGroup();
+
+    let member=
+        group.members[
+            game.currentMember
+        ];
+
+    document
+        .getElementById(
+            "styleMemberName"
+        )
+        .textContent=
+        member.name;
+
+    document
+        .getElementById(
+            "previewBody"
+        )
+        .style.background=
+        member.outfit;
+
+    document
+        .getElementById(
+            "previewHair"
+        ).style.background=
+        member.hairColor;
+
+    let hair=
+        document
+        .getElementById(
+            "previewHair"
+        );
+
+    hair.className=
+        "avatar-hair";
+
+    if(member.hair!=="normal"){
+
+        hair.classList.add(
+            "hair-"+member.hair
+        );
+
+    }
+
+}
+
+
+function setHair(style){
+
+    let member=
+        getGroup().members[
+            game.currentMember
+        ];
+
+    member.hair=
+        style;
+
+    saveGame();
+
+    renderStyling();
+
+}
+
+
+function setHairColor(color){
+
+    let member=
+        getGroup().members[
+            game.currentMember
+        ];
+
+    member.hairColor=
+        color;
+
+    saveGame();
+
+    renderStyling();
+
+}
+
+
+function straightenHair(){
+
+    let member=
+        getGroup().members[
+            game.currentMember
+        ];
+
+    member.hair=
+        "straight";
+
+    saveGame();
+
+    renderStyling();
+
+    alert(
+        member.name+
+        "'s hair is now straight! ✨"
+    );
+
+}
+
+
+function setTop(type){
+
+    let member=
+        getGroup().members[
+            game.currentMember
+        ];
+
+    member.top=type;
+
+    saveGame();
+
+}
+
+
+function setBottom(type){
+
+    let member=
+        getGroup().members[
+            game.currentMember
+        ];
+
+    member.bottom=type;
+
+    if(type==="none")
+        member.dress=true;
+
+    saveGame();
+
+}
+
+
+function setDress(value){
+
+    let member=
+        getGroup().members[
+            game.currentMember
+        ];
+
+    member.dress=value;
+
+    saveGame();
+
+}
+
+
+function setOutfitColor(color){
+
+    let member=
+        getGroup().members[
+            game.currentMember
+        ];
+
+    member.outfit=
+        color;
+
+    saveGame();
+
+    renderStyling();
+
+}
+
+
+/* =========================================
+   FORMATION
+========================================= */
+
+function openFormation(){
+
+    showScreen("formation");
+
+}
+
+
+function openPerformance(){
+
+    showScreen("performance");
+
+}
+
+
+function renderFormation(){
+
+    let group=getGroup();
+
+    let stage=
+        document
+        .getElementById(
+            "formationStage"
+        );
+
+    stage
+        .querySelectorAll(".idol")
+        .forEach(
+            e=>e.remove()
+        );
+
+
+    group.members.forEach(
+        (member,index)=>{
+
+            let idol=
+                document.createElement("div");
+
+            idol.className="idol";
+
+            idol.style.left=
+                member.x+"%";
+
+            idol.style.top=
+                member.y+"%";
+
+
+            idol.innerHTML=`
+
+                <div
+                    class="idol-hair"
+                    style="
+                    background:${member.hairColor}">
+                </div>
+
+                <div
+                    class="idol-head">
+                </div>
+
+                <div
+                    class="idol-body"
+                    style="
+                    background:${member.outfit}">
+                </div>
+
+                <div class="idol-name">
+                    ${member.name}
+                </div>
+
+            `;
+
+
+            makeDraggable(
+                idol,
+                member
+            );
+
+
+            stage.appendChild(idol);
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   DRAG FORMATION
+========================================= */
+
+function makeDraggable(
+    element,
+    member
+){
+
+    let dragging=false;
+
+    element.addEventListener(
+        "pointerdown",
+        e=>{
+
+            dragging=true;
+
+            element.setPointerCapture(
+                e.pointerId
+            );
+
+        }
+    );
+
+
+    element.addEventListener(
+        "pointermove",
+        e=>{
+
+            if(!dragging)
+                return;
+
+
+            let rect=
+                element
+                .parentElement
+                .getBoundingClientRect();
+
+
+            let x=
+                ((e.clientX-
+                rect.left)/
+                rect.width)*100;
+
+
+            let y=
+                ((e.clientY-
+                rect.top)/
+                rect.height)*100;
+
+
+            x=
+                Math.max(
+                    5,
+                    Math.min(95,x)
+                );
+
+            y=
+                Math.max(
+                    10,
+                    Math.min(90,y)
+                );
+
+
+            member.x=x;
+            member.y=y;
+
+
+            element.style.left=
+                x+"%";
+
+            element.style.top=
+                y+"%";
+
+        }
+    );
+
+
+    element.addEventListener(
+        "pointerup",
+        ()=>{
+
+            dragging=false;
+
+            saveGame();
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   FORMATION PRESETS
+========================================= */
+
+function formationPreset(
+    type
+){
+
+    let group=getGroup();
+
+    let n=
+        group.members.length;
+
+
+    group.members.forEach(
+        (member,i)=>{
+
+            let x=50;
+            let y=50;
+
+
+            if(type==="line"){
+
+                x=
+                    15+
+                    i*
+                    (70/
+                    Math.max(1,n-1));
+
+                y=60;
+
+            }
+
+
+            if(type==="v"){
+
+                let center=
+                    (n-1)/2;
+
+                x=
+                    50+
+                    (i-center)*13;
+
+                y=
+                    30+
+                    Math.abs(
+                        i-center
+                    )*10;
+
+            }
+
+
+            if(type==="triangle"){
+
+                let positions=[
+                    [50,25],
+                    [30,55],
+                    [70,55],
+                    [20,75],
+                    [40,75],
+                    [60,75],
+                    [80,75],
+                    [50,65]
+                ];
+
+                [x,y]=
+                    positions[
+                        i%positions.length
+                    ];
+
+            }
+
+
+            if(type==="diamond"){
+
+                let positions=[
+                    [50,20],
+                    [30,40],
+                    [70,40],
+                    [50,60],
+                    [20,70],
+                    [80,70],
+                    [40,80],
+                    [60,80]
+                ];
+
+                [x,y]=
+                    positions[
+                        i%positions.length
+                    ];
+
+            }
+
+
+            if(type==="circle"){
+
+                let angle=
+                    (Math.PI*2/n)*i;
+
+                x=
+                    50+
+                    Math.cos(angle)*32;
+
+                y=
+                    50+
+                    Math.sin(angle)*25;
+
+            }
+
+
+            if(type==="random"){
+
+                x=
+                    10+
+                    Math.random()*80;
+
+                y=
+                    20+
+                    Math.random()*65;
+
+            }
+
+
+            member.x=x;
+            member.y=y;
+
+        }
+    );
+
+
+    saveGame();
+
+    renderFormation();
+
+}
+
+
+/* =========================================
+   PERFORMANCE
+========================================= */
+
+let danceRunning=false;
+
+
+function renderPerformance(){
+
+    let group=getGroup();
+
+    let stage=
+        document
+        .getElementById(
+            "performers"
+        );
+
+    stage.innerHTML="";
+
+
+    group.members.forEach(
+        member=>{
+
+            let p=
+                document
+                .createElement("div");
+
+            p.className=
+                "performer";
+
+
+            p.style.left=
+                member.x+"%";
+
+            p.style.top=
+                (member.y+5)+"%";
+
+
+            p.innerHTML=`
+
+                <div
+                    class="performer-hair"
+                    style="
+                    background:${member.hairColor}">
+                </div>
+
+                <div
+                    class="performer-head">
+                </div>
+
+                <div
+                    class="performer-body"
+                    style="
+                    background:${member.outfit}">
+                </div>
+
+                <div class="arm left"></div>
+                <div class="arm right"></div>
+
+                <div class="leg left"></div>
+                <div class="leg right"></div>
+
+            `;
+
+
+            stage.appendChild(p);
+
+        }
+    );
+
+}
+
+
+function startDance(){
+
+    renderPerformance();
+
+    let stage=
+        document
+        .getElementById(
+            "performers"
+        );
+
+    danceRunning=true;
+
+    stage.classList.add(
+        "dancing"
+    );
+
+    document
+        .getElementById(
+            "syncValue"
+        )
+        .textContent=
+        "100%";
+
+
+}
+
+
+function stopDance(){
+
+    danceRunning=false;
+
+    document
+        .getElementById(
+            "performers"
+        )
+        .classList.remove(
+            "dancing"
+        );
+
+}
+
+
+function showEnding(){
+
+    let group=getGroup();
+
+    stopDance();
+
+    document
+        .getElementById(
+            "endingName"
+        )
+        .textContent=
+        group.members[
+            group.members.length-1
+        ].name+
+        " ✨";
+
+    document
+        .getElementById(
+            "ending"
+        )
+        .classList.add("show");
+
+
+    setTimeout(
+        ()=>{
+
+            document
+                .getElementById(
+                    "ending"
+                )
+                .classList.remove(
+                    "show"
+                );
+
+        },
+        3500
+    );
+
+}
+
+
+/* =========================================
+   COMPETITION
+========================================= */
+
+function openCompetition(){
+
+    showScreen(
+        "competition"
+    );
+
+}
+
+
+function renderCompetition(){
+
+    let group=getGroup();
+
+    let list=
+        document
+        .getElementById(
+            "competitionList"
+        );
+
+    let rivals=[
+
+        {
+            name:"AURORA",
+            score:91
+        },
+
+        {
+            name:"VELVET",
+            score:87
+        },
+
+        {
+            name:"NOVA",
+            score:84
+        },
+
+        {
+            name:"CELESTIA",
+            score:79
+        }
+
+    ];
+
+
+    let myScore=
+        calculateScore(group);
+
+
+    rivals.push({
+
+        name:group.name,
+        score:myScore
+
+    });
+
+
+    rivals.sort(
+        (a,b)=>
+        b.score-a.score
+    );
+
+
+    list.innerHTML="";
+
+
+    rivals.forEach(
+        (r,i)=>{
+
+            let div=
+                document.createElement("div");
+
+            div.className="race";
+
+            div.innerHTML=`
+
+                <div class="position">
+                    ${i+1}
+                </div>
+
+                <div class="race-info">
+
+                    <h3>
+                        ${r.name}
+                    </h3>
+
+                    <p>
+                        Performance Score
+                    </p>
+
+                </div>
+
+                <div class="score">
+                    ${r.score}
+                </div>
+
+            `;
+
+            list.appendChild(div);
+
+        }
+    );
+
+}
+
+
+function calculateScore(group){
+
+    let dance=
+        average(
+            group.members.map(
+                m=>m.dance
+            )
+        );
+
+
+    let vocal=
+        average(
+            group.members.map(
+                m=>m.vocal
+            )
+        );
+
+
+    let synchronization=
+        calculateSync(group);
+
+
+    return Math.round(
+        (
+            dance+
+            vocal+
+            synchronization
+        )/3
+    );
+
+}
+
+
+function calculateSync(group){
+
+    if(group.members.length<2)
+        return 100;
+
+
+    let xs=
+        group.members.map(
+            m=>m.x
+        );
+
+
+    let ys=
+        group.members.map(
+            m=>m.y
+        );
+
+
+    let spread=
+        Math.abs(
+            average(xs)-
+            50
+        )+
+        Math.abs(
+            average(ys)-
+            50
+        );
+
+
+    return Math.max(
+        80,
+        Math.round(
+            100-
+            spread/2
+        )
+    );
+
+}
+
+
+function average(arr){
+
+    if(!arr.length)
+        return 0;
+
+    return arr.reduce(
+        (a,b)=>a+b,
+        0
+    )/arr.length;
+
+}
+
+
+/* =========================================
+   RESOURCE UI
+========================================= */
+
+function updateResources(){
+
+    document
+        .getElementById("coins")
+        .textContent=
+        game.coins.toLocaleString();
+
+    document
+        .getElementById("gems")
+        .textContent=
+        game.gems.toLocaleString();
+
+}
+
+
+/* =========================================
+   INIT
+========================================= */
+
+loadGame();
+
+updateResources();
+
+renderGroups();
+
+</script>
+
+</body>
+</html>
